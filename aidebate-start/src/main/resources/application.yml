@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
   servlet:
     context-path: /
 
@@ -10,9 +10,9 @@ spring:
   # Database Configuration
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/aidebate?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/aidebate?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: ${MYSQL_PASSWORD:root}
+    password: 123456
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
@@ -23,9 +23,9 @@ spring:
   # Redis Configuration (Optional)
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      host: localhost
+      port: 6379
+      password: 
       database: 0
       timeout: 3000ms
       lettuce:
@@ -37,14 +37,28 @@ spring:
           
   # AI Configuration - Spring AI Alibaba
   ai:
+    ollama:
+      base-url: http://localhost:11434 # 哦llama地址
+      chat:
+        model: deepseek-r1:8b # 模型
+        options:
+          timeout: 90000
+          max-tokens: 20000
+          temperature: 0.8 # 温度越高，回答越有创意
+          top-p: 0.9 # 数值越高，回答越多样
+          top-k: 100 # 数值越高，回答越多样
+    dashscope: 
+      api-key: sk-df320765144942a298260c24af4ff2d9
+      url: http://127.0.0.1:11434/v1/chat/completions
+      model: deepseek-r1:8b
     alibaba:
-      api-key: ${ALIBABA_AI_API_KEY:your-api-key-here}
-      model: ${ALIBABA_AI_MODEL:qwen-max}
+      api-key: sk-df320765144942a298260c24af4ff2d9
+      model: qwen-max
       temperature: 0.7
-      max-tokens: 2000
-      timeout: 30000
+      max-tokens: 20000
+      timeout: 60000
       enable-retry: true
-      max-retry-attempts: 3
+      max-retry-attempts: 2
 
 # MyBatis Plus Configuration
 mybatis-plus:

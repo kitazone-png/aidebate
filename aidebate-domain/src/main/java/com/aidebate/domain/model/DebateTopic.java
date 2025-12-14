@@ -1,5 +1,8 @@
 package com.aidebate.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.IdType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +15,7 @@ import java.time.LocalDateTime;
  *
  * @author AI Debate Team
  */
+@TableName("debate_topic")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,6 +25,7 @@ public class DebateTopic {
     /**
      * Unique topic identifier
      */
+    @TableId(value = "topic_id", type = IdType.AUTO)
     private Long topicId;
     
     /**

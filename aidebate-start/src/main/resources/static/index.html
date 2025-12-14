@@ -26,7 +26,7 @@
     <style>
         body {
             background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
-            font-family: 'Courier New', monospace;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
         }
         
         .wasteland-card {
@@ -42,184 +42,466 @@
             transition: all 0.3s;
         }
         
-        .wasteland-button:hover {
+        .wasteland-button:hover:not(:disabled) {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(244, 208, 63, 0.5);
         }
         
-        .split-panel {
-            border: 1px solid #d4af37;
-            background: rgba(15, 15, 26, 0.6);
+        .wasteland-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Chat message styles */
+        .chat-message {
+            animation: slideIn 0.3s ease-out;
+            max-width: 70%;
+        }
+        
+        .chat-message-left {
+            align-self: flex-start;
+        }
+        
+        .chat-message-right {
+            align-self: flex-end;
+        }
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            position: relative;
+        }
+        
+        .message-bubble-affirmative {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .message-bubble-negative {
+            background: rgba(239, 68, 68, 0.2);
+            border-right: 4px solid #ef4444;
+        }
+        
+        .message-bubble-moderator {
+            background: rgba(245, 158, 11, 0.2);
+            border-left: 4px solid #f59e0b;
+        }
+        
+        /* Streaming preview area */
+        .streaming-preview {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px dashed #d4af37;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { border-color: rgba(212, 175, 55, 0.5); }
+            50% { border-color: rgba(212, 175, 55, 1); }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .typing-indicator::after {
+            content: '...';
+            animation: typing 1.5s infinite;
+        }
+        
+        @keyframes typing {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .flow-step {
+            transition: all 0.3s;
+        }
+        
+        .flow-step.active {
+            background: rgba(212, 175, 55, 0.3);
+            border-color: #f4d03f;
+            box-shadow: 0 0 10px rgba(244, 208, 63, 0.5);
+        }
+        
+        .flow-step.completed {
+            opacity: 0.5;
+        }
+        
+        /* Message content truncation */
+        .message-content {
+            max-height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .message-content.truncated::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, rgba(22, 33, 62, 0.9));
+        }
+        
+        .view-full-btn {
+            color: #f4d03f;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: inline-block;
+        }
+        
+        .view-full-btn:hover {
+            color: #d4af37;
+        }
+        
+        /* Full content modal */
+        .full-content-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 800px;
+            max-height: 80vh;
+            width: 90%;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .modal-content-body {
+            max-height: 60vh;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body class="min-h-screen text-gray-100">
     <!-- Header -->
-    <header class="p-6 border-b-2 border-wasteland-gold">
-        <div class="container mx-auto">
-            <h1 class="text-4xl font-bold text-wasteland-gold text-center">
-                ⚔️ AI DEBATE SIMULATOR ⚔️
-            </h1>
-            <p class="text-center mt-2 text-wasteland-gold-light">Wasteland Edition - Forge Your Arguments in the Arena</p>
+    <header class="p-4 border-b-2 border-wasteland-gold">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 id="header-title" class="text-3xl font-bold text-wasteland-gold">
+                    ⚔️ AI DEBATE SIMULATOR ⚔️
+                </h1>
+                <p id="header-subtitle" class="text-wasteland-gold-light text-sm">
+                    <span id="subtitle-text">Wasteland Edition - Forge Your Arguments in the Arena</span>
+                    <span id="observer-badge" class="ml-2 px-2 py-1 bg-amber-600 text-xs rounded">Observer Mode</span>
+                </p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="btn-lang-toggle" class="px-4 py-2 bg-wasteland-blue text-wasteland-gold rounded hover:bg-opacity-80 transition">
+                    🌐 <span id="lang-label">EN</span>
+                </button>
+                <div id="session-status" class="text-sm px-3 py-1 rounded bg-wasteland-darker border border-wasteland-gold">
+                    <span id="status-text">Not Started</span>
+                </div>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- Welcome Section -->
-        <div class="wasteland-card rounded-lg p-8 mb-8">
-            <h2 class="text-2xl font-bold text-wasteland-gold mb-4">Welcome to the Debate Arena</h2>
-            <p class="text-lg mb-4">
-                In this post-apocalyptic world, the power of argument is your greatest weapon.
-                Choose your side, face AI opponents, and prove your debating prowess.
-            </p>
-            <div class="flex gap-4 flex-wrap">
-                <button class="wasteland-button px-6 py-3 rounded-lg">
-                    Start New Debate
-                </button>
-                <button class="wasteland-button px-6 py-3 rounded-lg">
-                    View Topics
-                </button>
-                <button class="wasteland-button px-6 py-3 rounded-lg">
-                    Admin Panel
-                </button>
-            </div>
-        </div>
-
-        <!-- Topic Selection -->
-        <div class="wasteland-card rounded-lg p-8 mb-8">
-            <h2 class="text-2xl font-bold text-wasteland-gold mb-4">📋 Available Debate Topics</h2>
-            <div id="topics-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Topics will be loaded here -->
-                <div class="p-4 bg-wasteland-darker rounded border border-wasteland-gold">
-                    <h3 class="font-bold text-wasteland-gold-light mb-2">Loading topics...</h3>
-                    <p class="text-sm text-gray-400">Fetching available debate topics from the server...</p>
+    <main class="container mx-auto px-4 py-6">
+        <!-- Topic Selector with Scores -->
+        <div class="mb-4">
+            <div id="topic-compact-view" class="wasteland-card rounded-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex-1">
+                    <span id="topic-label" class="text-wasteland-gold font-bold">Current Topic:</span>
+                    <span id="selected-topic-display" class="ml-2 text-gray-300">No topic selected</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Split Screen Debate Interface (Example) -->
-        <div class="wasteland-card rounded-lg p-8">
-            <h2 class="text-2xl font-bold text-wasteland-gold mb-4 text-center">⚡ Live Debate Arena ⚡</h2>
-            
-            <!-- Timer and Score -->
-            <div class="flex justify-between items-center mb-6 p-4 bg-wasteland-darker rounded">
-                <div class="text-center">
-                    <div class="text-wasteland-gold font-bold">TIME</div>
-                    <div class="text-2xl font-mono">03:00</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-wasteland-gold font-bold">ROUND</div>
-                    <div class="text-2xl font-mono">1 / 5</div>
-                </div>
-                <div class="flex gap-8">
+                
+                <!-- Score Board (moved from sidebar) -->
+                <div class="flex items-center gap-4 px-4 border-l border-wasteland-gold">
                     <div class="text-center">
-                        <div class="text-blue-400 font-bold">USER</div>
-                        <div class="text-2xl font-mono text-blue-400">0.00</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-red-400 font-bold">AI</div>
-                        <div class="text-2xl font-mono text-red-400">0.00</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Split Panels -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- User Panel (Left) -->
-                <div class="split-panel rounded-lg p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                        <h3 class="text-xl font-bold text-blue-400">Your Arguments</h3>
-                    </div>
-                    <div class="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                        <div class="p-3 bg-wasteland-dark rounded border-l-4 border-blue-500">
-                            <div class="text-xs text-gray-500 mb-1">Round 1 - Affirmative</div>
-                            <p class="text-sm">Your argument will appear here...</p>
+                        <div id="score-affirmative-label" class="text-blue-400 text-xs font-bold mb-1">AFFIRMATIVE</div>
+                        <div class="text-2xl font-mono text-blue-400">
+                            <span id="affirmative-score">0.00</span>
+                            <span class="text-sm text-gray-400"> / 500</span>
                         </div>
                     </div>
-                    <div class="mt-4">
-                        <textarea 
-                            class="w-full p-3 bg-wasteland-dark border border-wasteland-gold rounded text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-wasteland-gold"
-                            rows="4"
-                            placeholder="Type your argument here... (max 500 characters)"
-                            maxlength="500"
-                        ></textarea>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-xs text-gray-500">0 / 500 characters</span>
-                            <div class="space-x-2">
-                                <button class="px-4 py-2 bg-wasteland-blue text-wasteland-gold rounded hover:bg-opacity-80">
-                                    AI Preview
-                                </button>
-                                <button class="wasteland-button px-4 py-2 rounded">
-                                    Submit
-                                </button>
+                    <div class="text-wasteland-gold text-2xl font-bold">:</div>
+                    <div class="text-center">
+                        <div id="score-negative-label" class="text-red-400 text-xs font-bold mb-1">NEGATIVE</div>
+                        <div class="text-2xl font-mono text-red-400">
+                            <span id="negative-score">0.00</span>
+                            <span class="text-sm text-gray-400"> / 500</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="btn-select-topic" class="wasteland-button px-4 py-2 rounded whitespace-nowrap">
+                    Select Topic
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Layout Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <!-- Left Sidebar: Debate Flow & Rules -->
+            <div class="lg:col-span-1">
+                <div class="wasteland-card rounded-lg p-4 sticky top-4">
+                    <h3 id="flow-title" class="text-xl font-bold text-wasteland-gold mb-4">Debate Flow & Rules</h3>
+                    
+                    <!-- Current Status -->
+                    <div class="mb-4 space-y-2">
+                        <div class="text-sm">
+                            <span id="label-current-round" class="text-wasteland-gold">Current Round:</span>
+                            <div class="text-2xl font-mono text-center py-2">
+                                <span id="current-round-num">1</span> / <span id="max-rounds">5</span>
+                            </div>
+                            <div class="w-full bg-wasteland-darker rounded-full h-2">
+                                <div id="round-progress" class="bg-wasteland-gold h-2 rounded-full transition-all" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-sm">
+                            <span id="label-time" class="text-wasteland-gold">Time Remaining:</span>
+                            <div id="time-display" class="text-2xl font-mono text-center py-2">03:00</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Debate Flow Steps -->
+                    <div class="mb-4">
+                        <div class="space-y-2 text-sm">
+                            <div id="flow-round1" class="flow-step p-2 rounded border border-gray-600 active">
+                                <span id="flow-r1-label">Round 1: Opening Statements</span>
+                            </div>
+                            <div class="text-center text-gray-500">↓</div>
+                            <div id="flow-round2" class="flow-step p-2 rounded border border-gray-600">
+                                <span id="flow-r2-label">Round 2: Rebuttals</span>
+                            </div>
+                            <div class="text-center text-gray-500">↓</div>
+                            <div id="flow-round3" class="flow-step p-2 rounded border border-gray-600">
+                                <span id="flow-r3-label">Round 3: Cross-Examination</span>
+                            </div>
+                            <div class="text-center text-gray-500">↓</div>
+                            <div id="flow-round4" class="flow-step p-2 rounded border border-gray-600">
+                                <span id="flow-r4-label">Round 4: Defense</span>
+                            </div>
+                            <div class="text-center text-gray-500">↓</div>
+                            <div id="flow-round5" class="flow-step p-2 rounded border border-gray-600">
+                                <span id="flow-r5-label">Round 5: Closing Arguments</span>
+                            </div>
+                            <div class="text-center text-gray-500">↓</div>
+                            <div id="flow-judging" class="flow-step p-2 rounded border border-gray-600">
+                                <span id="flow-j-label">Judging & Results</span>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Rules -->
+                    <div class="border-t border-wasteland-gold pt-3 mt-3">
+                        <h4 id="rules-title" class="font-bold text-wasteland-gold mb-2">Rules</h4>
+                        <ul class="text-xs space-y-1 text-gray-300">
+                            <li id="rule-max-length">• Max argument: 500 characters</li>
+                            <li id="rule-time-limit">• Time limit: 3 minutes/round</li>
+                            <li id="rule-scoring">• Scoring: Logic, Evidence, Rhetoric</li>
+                            <li id="rule-prohibited">• No sensitive words or attacks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="lg:col-span-3 flex flex-col" style="height: calc(100vh - 280px);">
+                <!-- Chat Messages Container -->
+                <div id="chat-messages" class="flex-1 wasteland-card rounded-lg p-4 overflow-y-auto mb-4 flex flex-col gap-3">
+                    <div id="chat-empty-state" class="text-center text-gray-500 italic py-8">
+                        <span id="chat-empty-text">No messages yet. Start the debate!</span>
+                    </div>
                 </div>
 
-                <!-- AI Panel (Right) -->
-                <div class="split-panel rounded-lg p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-                        <h3 class="text-xl font-bold text-red-400">AI Opponent</h3>
+                <!-- Streaming Preview Area -->
+                <div id="streaming-preview-container" class="hidden mb-4">
+                    <div class="streaming-preview rounded-lg p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-2 h-2 rounded-full bg-wasteland-gold animate-ping"></div>
+                            <span id="streaming-speaker" class="text-sm text-wasteland-gold font-bold">AI is generating...</span>
+                        </div>
+                        <div id="streaming-content" class="text-sm text-gray-300 min-h-[40px]"></div>
                     </div>
-                    <div class="space-y-3 max-h-64 overflow-y-auto">
-                        <div class="p-3 bg-wasteland-dark rounded border-l-4 border-red-500">
-                            <div class="text-xs text-gray-500 mb-1">Round 1 - Negative</div>
-                            <p class="text-sm">AI arguments will appear here...</p>
+                </div>
+
+                <!-- Input Composition Area - Replaced with Playback Controls -->
+                <div class="wasteland-card rounded-lg p-4">
+                    <div class="text-center">
+                        <h3 id="playback-title" class="text-lg font-bold text-wasteland-gold mb-4">Debate Controls</h3>
+                        <div class="flex justify-center items-center gap-3 mb-3">
+                            <button id="btn-start-debate" class="wasteland-button px-6 py-3 rounded-lg text-lg" style="display: none;">
+                                ▶ Start Debate
+                            </button>
+                            <button id="btn-pause-debate" class="px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition" disabled style="display: none;">
+                                ⏸ Pause
+                            </button>
+                            <button id="btn-resume-debate" class="wasteland-button px-6 py-3 rounded-lg" disabled style="display: none;">
+                                ▶ Resume
+                            </button>
+                            <button id="btn-skip-debate" class="px-6 py-3 bg-wasteland-blue text-wasteland-gold rounded-lg hover:bg-opacity-80 transition" disabled style="display: none;">
+                                ⏭ Skip to End
+                            </button>
+                        </div>
+                        <div id="playback-status" class="text-sm text-gray-400">
+                            <span id="playback-status-text">Select a topic to begin</span>
                         </div>
                     </div>
-                    <div class="mt-4 p-4 bg-wasteland-dark rounded">
-                        <div class="text-xs text-wasteland-gold mb-2">AI Configuration</div>
-                        <div class="text-sm text-gray-400">
-                            <div>Personality: Analytical</div>
-                            <div>Level: Expert</div>
-                        </div>
-                    </div>
+                </div>
+
+                <!-- New Debate Button -->
+                <div id="new-debate-section" class="hidden text-center mt-4">
+                    <button id="btn-new-debate" class="wasteland-button px-8 py-3 rounded-lg text-lg">
+                        Start New Debate
+                    </button>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Topic Selection Modal -->
+    <div id="topic-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+        <div class="wasteland-card rounded-lg p-6 max-w-4xl max-h-[80vh] overflow-y-auto m-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="modal-topics-title" class="text-2xl font-bold text-wasteland-gold">Available Debate Topics</h2>
+                <button id="btn-close-modal" class="text-gray-400 hover:text-white text-3xl leading-none">×</button>
+            </div>
+            <div id="topics-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Topics will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Configuration Modal -->
+    <div id="ai-config-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+        <div class="wasteland-card rounded-lg p-6 max-w-2xl m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modal-config-title" class="text-2xl font-bold text-wasteland-gold">AI Configuration</h2>
+                <button id="btn-close-config-modal" class="text-gray-400 hover:text-white text-3xl leading-none">×</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Affirmative AI Config -->
+                <div class="border border-blue-500 rounded-lg p-4">
+                    <h3 id="config-affirmative-title" class="text-lg font-bold text-blue-400 mb-4">Affirmative Side</h3>
+                    <div class="mb-4">
+                        <label id="label-affirmative-personality" class="block text-sm text-gray-300 mb-2">Personality</label>
+                        <select id="affirmative-personality" class="w-full p-2 bg-wasteland-dark border border-wasteland-gold rounded text-gray-100">
+                            <option value="Analytical">Analytical</option>
+                            <option value="Passionate">Passionate</option>
+                            <option value="Logical">Logical</option>
+                            <option value="Creative">Creative</option>
+                            <option value="Aggressive">Aggressive</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label id="label-affirmative-expertise" class="block text-sm text-gray-300 mb-2">Expertise Level</label>
+                        <select id="affirmative-expertise" class="w-full p-2 bg-wasteland-dark border border-wasteland-gold rounded text-gray-100">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Expert" selected>Expert</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Negative AI Config -->
+                <div class="border border-red-500 rounded-lg p-4">
+                    <h3 id="config-negative-title" class="text-lg font-bold text-red-400 mb-4">Negative Side</h3>
+                    <div class="mb-4">
+                        <label id="label-negative-personality" class="block text-sm text-gray-300 mb-2">Personality</label>
+                        <select id="negative-personality" class="w-full p-2 bg-wasteland-dark border border-wasteland-gold rounded text-gray-100">
+                            <option value="Analytical">Analytical</option>
+                            <option value="Passionate" selected>Passionate</option>
+                            <option value="Logical">Logical</option>
+                            <option value="Creative">Creative</option>
+                            <option value="Aggressive">Aggressive</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label id="label-negative-expertise" class="block text-sm text-gray-300 mb-2">Expertise Level</label>
+                        <select id="negative-expertise" class="w-full p-2 bg-wasteland-dark border border-wasteland-gold rounded text-gray-100">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Expert" selected>Expert</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Auto-play Speed -->
+            <div class="mb-6">
+                <label id="label-autoplay-speed" class="block text-sm text-wasteland-gold mb-3">Auto-play Speed</label>
+                <div class="flex justify-center gap-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="autoplay-speed" value="FAST" class="mr-2">
+                        <span id="speed-fast-label" class="text-gray-300">Fast</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="autoplay-speed" value="NORMAL" checked class="mr-2">
+                        <span id="speed-normal-label" class="text-gray-300">Normal</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="autoplay-speed" value="SLOW" class="mr-2">
+                        <span id="speed-slow-label" class="text-gray-300">Slow</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-3">
+                <button id="btn-cancel-config" class="px-6 py-2 bg-wasteland-blue text-wasteland-gold rounded hover:bg-opacity-80 transition">
+                    Cancel
+                </button>
+                <button id="btn-save-config" class="wasteland-button px-6 py-2 rounded">
+                    Start Debate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Content Modal -->
+    <div id="full-content-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+        <div class="wasteland-card rounded-lg p-6 full-content-modal">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="full-content-modal-title" class="text-xl font-bold text-wasteland-gold">Full Content</h2>
+                <button id="btn-close-full-content" class="text-gray-400 hover:text-white text-3xl leading-none">×</button>
+            </div>
+            
+            <div class="mb-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <div id="full-content-speaker-indicator" class="w-3 h-3 rounded-full"></div>
+                    <span id="full-content-speaker" class="text-sm font-bold"></span>
+                    <span id="full-content-timestamp" class="text-xs text-gray-500 ml-auto"></span>
+                </div>
+                <div id="full-content-round" class="text-xs text-gray-500 mb-3"></div>
+            </div>
+            
+            <div class="modal-content-body">
+                <div id="full-content-text" class="text-sm text-gray-300 whitespace-pre-wrap"></div>
+            </div>
+            
+            <div class="flex justify-end mt-4">
+                <button id="btn-close-full-content-bottom" class="wasteland-button px-6 py-2 rounded">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="mt-12 p-6 border-t-2 border-wasteland-gold text-center text-gray-500">
-        <p>AI Debate Simulator v1.0.0 | Wasteland Edition | Powered by Spring Boot & Vue.js</p>
+    <footer class="mt-12 p-4 border-t-2 border-wasteland-gold text-center text-gray-500 text-sm">
+        <p id="footer-text">AI Debate Simulator v1.0.0 | Wasteland Edition | Powered by Spring Boot & Vue.js</p>
     </footer>
 
-    <script>
-        // Fetch topics from API
-        async function loadTopics() {
-            try {
-                const response = await fetch('/api/topics');
-                const topics = await response.json();
-                
-                const topicsList = document.getElementById('topics-list');
-                if (topics.length === 0) {
-                    topicsList.innerHTML = '<div class="col-span-2 text-center text-gray-500">No topics available yet.</div>';
-                    return;
-                }
-                
-                topicsList.innerHTML = topics.map(topic => `
-                    <div class="p-4 bg-wasteland-darker rounded border border-wasteland-gold hover:border-wasteland-gold-light transition cursor-pointer">
-                        <h3 class="font-bold text-wasteland-gold-light mb-2">${topic.title}</h3>
-                        <p class="text-sm text-gray-400 mb-2">${topic.description || 'No description'}</p>
-                        <div class="flex justify-between items-center text-xs text-gray-500">
-                            <span class="bg-wasteland-blue px-2 py-1 rounded">${topic.category || 'General'}</span>
-                            <span>${topic.source}</span>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error loading topics:', error);
-                document.getElementById('topics-list').innerHTML = 
-                    '<div class="col-span-2 text-center text-red-400">Error loading topics. Please check server connection.</div>';
-            }
-        }
-
-        // Load topics on page load
-        window.addEventListener('DOMContentLoaded', loadTopics);
-    </script>
+    <script src="app-chat.js"></script>
 </body>
 </html>

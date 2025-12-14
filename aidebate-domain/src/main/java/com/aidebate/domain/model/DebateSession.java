@@ -1,5 +1,8 @@
 package com.aidebate.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.IdType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +16,7 @@ import java.time.LocalDateTime;
  *
  * @author AI Debate Team
  */
+@TableName("debate_session")
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,6 +26,7 @@ public class DebateSession {
     /**
      * Unique session identifier
      */
+    @TableId(value = "session_id", type = IdType.AUTO)
     private Long sessionId;
     
     /**
@@ -30,19 +35,29 @@ public class DebateSession {
     private Long topicId;
     
     /**
-     * Participating user
+     * Participating user (optional for AI-only debates)
      */
     private Long userId;
     
     /**
-     * User's debate side
+     * AI configurations for both affirmative and negative debaters
      */
-    private DebateSide userSide;
+    private String aiDebaterConfigs;
     
     /**
-     * AI personality and level settings
+     * Auto-play speed for AI argument generation
      */
-    private String aiOpponentConfig;
+    private AutoPlaySpeed autoPlaySpeed;
+    
+    /**
+     * Current pause state
+     */
+    private Boolean isPaused;
+    
+    /**
+     * Current execution position for pause/resume
+     */
+    private String currentPosition;
     
     /**
      * Session status
@@ -60,14 +75,14 @@ public class DebateSession {
     private LocalDateTime completedAt;
     
     /**
-     * User's final score
+     * Affirmative side's final score
      */
-    private BigDecimal finalScoreUser;
+    private BigDecimal finalScoreAffirmative;
     
     /**
-     * AI's final score
+     * Negative side's final score
      */
-    private BigDecimal finalScoreAi;
+    private BigDecimal finalScoreNegative;
     
     /**
      * Debate winner
@@ -80,11 +95,12 @@ public class DebateSession {
     private LocalDateTime createdAt;
     
     /**
-     * Debate side enumeration
+     * Auto-play speed enumeration
      */
-    public enum DebateSide {
-        AFFIRMATIVE,
-        NEGATIVE
+    public enum AutoPlaySpeed {
+        FAST,
+        NORMAL,
+        SLOW
     }
     
     /**
@@ -93,6 +109,7 @@ public class DebateSession {
     public enum SessionStatus {
         INITIALIZED,
         IN_PROGRESS,
+        PAUSED,
         COMPLETED,
         ABORTED
     }
@@ -101,8 +118,8 @@ public class DebateSession {
      * Winner enumeration
      */
     public enum Winner {
-        USER,
-        AI,
+        AFFIRMATIVE,
+        NEGATIVE,
         DRAW
     }
     
@@ -131,12 +148,36 @@ public class DebateSession {
     /**
      * Complete the debate session
      */
-    public void complete(BigDecimal userScore, BigDecimal aiScore, Winner winner) {
+    public void complete(BigDecimal affirmativeScore, BigDecimal negativeScore, Winner winner) {
         this.status = SessionStatus.COMPLETED;
         this.completedAt = LocalDateTime.now();
-        this.finalScoreUser = userScore;
-        this.finalScoreAi = aiScore;
+        this.finalScoreAffirmative = affirmativeScore;
+        this.finalScoreNegative = negativeScore;
         this.winner = winner;
+    }
+    
+    /**
+     * Pause the debate session
+     */
+    public void pause(String position) {
+        this.status = SessionStatus.PAUSED;
+        this.isPaused = true;
+        this.currentPosition = position;
+    }
+    
+    /**
+     * Resume the debate session
+     */
+    public void resume() {
+        this.status = SessionStatus.IN_PROGRESS;
+        this.isPaused = false;
+    }
+    
+    /**
+     * Check if session is paused
+     */
+    public boolean isPaused() {
+        return Boolean.TRUE.equals(isPaused);
     }
     
     /**

@@ -1,0 +1,166 @@
+{
+  "header": {
+    "title": "AI 辩论模拟器",
+    "subtitle": "废土版 - 在竞技场中锻造你的论点",
+    "observerMode": "观察模式"
+  },
+  "buttons": {
+    "startDebate": "开始辩论",
+    "viewTopics": "查看辩题",
+    "adminPanel": "管理面板",
+    "selectTopic": "选择辩题",
+    "changeTopic": "更换辩题",
+    "submit": "提交",
+    "preview": "AI 应答",
+    "startNewDebate": "开始新辩论",
+    "pauseDebate": "暂停",
+    "resumeDebate": "继续",
+    "skipToEnd": "跳至结尾"
+  },
+  "welcome": {
+    "title": "欢迎来到辩论竞技场",
+    "description": "在这个后启示录世界中,论证的力量是你最强大的武器。选择你的立场,面对AI对手,证明你的辩论实力。"
+  },
+  "topics": {
+    "title": "可用辩论题目",
+    "loading": "加载辩题中...",
+    "fetchingMessage": "正在从服务器获取可用辩题...",
+    "noTopics": "暂无可用辩题。",
+    "currentTopic": "当前辩题"
+  },
+  "debate": {
+    "title": "实时辩论竞技场",
+    "time": "时间",
+    "round": "回合",
+    "user": "用户",
+    "ai": "AI",
+    "affirmative": "正方",
+    "negative": "反方",
+    "yourArguments": "你的论点",
+    "aiOpponent": "AI 对手",
+    "argumentPlaceholder": "在此输入你的论点...(最多500字符)",
+    "charCounter": "字符",
+    "aiTyping": "AI 正在输入...",
+    "aiConfig": "AI 配置",
+    "personality": "个性",
+    "level": "级别",
+    "waitingForArgument": "你的论点将在提交后显示在这里。",
+    "waitingForAI": "AI的论点将在你提交后显示在这里。"
+  },
+  "chat": {
+    "affirmative": "正方",
+    "negative": "反方",
+    "moderator": "主持人",
+    "streaming": "正在生成...",
+    "yourTurn": "轮到您发言",
+    "emptyState": "暂无消息。开始辩论吧!",
+    "viewFull": "查看完整内容",
+    "readAloud": "朗读",
+    "pause": "暂停",
+    "resume": "继续",
+    "stop": "停止",
+    "playing": "播放中...",
+    "audioError": "音频播放错误",
+    "audioLoading": "加载音频中..."
+  },
+  "input": {
+    "placeholder": "在此输入您的论点（最多500字）",
+    "submit": "提交",
+    "preview": "预览"
+  },
+  "moderator": {
+    "title": "主持人",
+     "welcome": "欢迎参加关于\"{topic}\"的辩论。你是{side}方。让我们开始第{round}回合。",
+    "roundStart": "第{round}回合开始。{speaker},请陈述你的论点。",
+    "turnTransition": "论点已收到。现在{speaker},请回应。",
+    "roundEnd": "第{round}回合结束。评委正在评分...",
+    "sessionEnd": "辩论结束。最终获胜者:{winner}",
+    "debateEnded": "辩论已结束。开始新辩论以继续。"
+  },
+  "flow": {
+    "title": "辩论流程与规则",
+    "currentRound": "当前回合",
+    "currentPhase": "当前阶段",
+    "timeRemaining": "剩余时间",
+    "activeSpeaker": "当前发言方",
+    "rules": "规则",
+    "maxLength": "论点最大长度:500字符",
+    "timeLimit": "每回合时间限制:3分钟",
+    "scoringCriteria": "评分标准:逻辑、证据、修辞、反驳",
+    "prohibited": "禁止:敏感词、人身攻击",
+    "rounds": {
+      "round1": "第1回合:开场陈述",
+      "round2": "第2回合:反驳",
+      "round3": "第3回合:交叉质询",
+      "round4": "第4回合:辩护",
+      "round5": "第5回合:总结陈词",
+      "judging": "评审与结果"
+    }
+  },
+  "score": {
+    "title": "计分板",
+    "userScore": "你的得分",
+    "aiScore": "AI得分",
+    "roundScore": "第{round}回合评分",
+    "affirmativeRoundScore": "正方",
+    "negativeRoundScore": "反方",
+    "cumulativeScores": "累计得分",
+    "maxScore": "/ 500"
+  },
+  "sides": {
+    "affirmative": "正方",
+    "negative": "反方",
+    "AFFIRMATIVE": "正方(支持)",
+    "NEGATIVE": "反方(反对)"
+  },
+  "states": {
+    "notStarted": "未开始",
+    "inProgress": "进行中",
+    "paused": "已暂停",
+    "completed": "已完成"
+  },
+  "modes": {
+    "observer": "观察模式"
+  },
+  "config": {
+    "aiConfiguration": "AI配置",
+    "affirmativeSide": "正方",
+    "negativeSide": "反方",
+    "personality": "个性",
+    "expertiseLevel": "专业水平",
+    "autoPlaySpeed": "自动播放速度"
+  },
+  "speed": {
+    "fast": "快速",
+    "normal": "正常",
+    "slow": "缓慢"
+  },
+  "personality": {
+    "analytical": "分析型",
+    "passionate": "激情型",
+    "logical": "逻辑型",
+    "creative": "创造型",
+    "aggressive": "进攻型"
+  },
+  "expertise": {
+    "beginner": "初级",
+    "intermediate": "中级",
+    "expert": "专家"
+  },
+  "messages": {
+    "selectTopicPrompt": "已选择:{topic}\n\n选择你的立场:\n确定 = 正方(支持)\n取消 = 反方(反对)",
+    "debateStarted": "辩论开始!你是{side}方。祝你好运!",
+    "pleaseEnterArgument": "请输入论点",
+    "pleaseSelectTopic": "请先选择辩题并开始辩论",
+    "failedToStart": "启动辩论失败。请重试。",
+    "failedToSubmit": "提交论点失败:{error}",
+    "debateComplete": "辩论结束!\n\n获胜者:{winner}\n你的得分:{userScore}\nAI得分:{aiScore}\n\n反馈:{feedback}",
+    "errorLoadingTopics": "加载辩题出错。请检查服务器连接。",
+    "adminPanelComingSoon": "管理面板即将推出!",
+    "selectTopicFirst": "请从下方列表中选择一个辩题以开始辩论!",
+    "debateEndedCannotSubmit": "辩论已结束。你不能提交新论点。"
+  },
+  "footer": {
+    "text": "AI 辩论模拟器 v1.0.0 | 废土版 | 由 Spring Boot 和 Vue.js 驱动"
+  }
+}

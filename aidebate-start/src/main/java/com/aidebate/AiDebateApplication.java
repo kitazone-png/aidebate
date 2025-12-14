@@ -3,7 +3,6 @@ package com.aidebate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 /**
  * AI Debate Simulator Application
  *
@@ -14,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AiDebateApplication {
 
     public static void main(String[] args) {
+        //FactoryBeanRegistrySupport a;
         SpringApplication.run(AiDebateApplication.class, args);
     }
 }
