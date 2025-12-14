@@ -1,0 +1,166 @@
+{
+  "header": {
+    "title": "AI DEBATE SIMULATOR",
+    "subtitle": "Wasteland Edition - Forge Your Arguments in the Arena",
+    "observerMode": "Observer Mode"
+  },
+  "buttons": {
+    "startDebate": "Start Debate",
+    "viewTopics": "View Topics",
+    "adminPanel": "Admin Panel",
+    "selectTopic": "Select Topic",
+    "changeTopic": "Change Topic",
+    "submit": "Submit",
+    "preview": "AI Response",
+    "startNewDebate": "Start New Debate",
+    "pauseDebate": "Pause",
+    "resumeDebate": "Resume",
+    "skipToEnd": "Skip to End"
+  },
+  "welcome": {
+    "title": "Welcome to the Debate Arena",
+    "description": "In this post-apocalyptic world, the power of argument is your greatest weapon. Choose your side, face AI opponents, and prove your debating prowess."
+  },
+  "topics": {
+    "title": "Available Debate Topics",
+    "loading": "Loading topics...",
+    "fetchingMessage": "Fetching available debate topics from the server...",
+    "noTopics": "No topics available yet.",
+    "currentTopic": "Current Topic"
+  },
+  "debate": {
+    "title": "Live Debate Arena",
+    "time": "TIME",
+    "round": "ROUND",
+    "user": "USER",
+    "ai": "AI",
+    "affirmative": "AFFIRMATIVE",
+    "negative": "NEGATIVE",
+    "yourArguments": "Your Arguments",
+    "aiOpponent": "AI Opponent",
+    "argumentPlaceholder": "Type your argument here... (max 500 characters)",
+    "charCounter": "characters",
+    "aiTyping": "AI is typing...",
+    "aiConfig": "AI Configuration",
+    "personality": "Personality",
+    "level": "Level",
+    "waitingForArgument": "Your arguments will appear here after submission.",
+    "waitingForAI": "AI arguments will appear here after you submit."
+  },
+  "chat": {
+    "affirmative": "Affirmative",
+    "negative": "Negative",
+    "moderator": "Moderator",
+    "streaming": "Generating...",
+    "yourTurn": "Your turn to speak",
+    "emptyState": "No messages yet. Start the debate!",
+    "viewFull": "View Full Content",
+    "readAloud": "Read aloud",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop",
+    "playing": "Playing...",
+    "audioError": "Audio playback error",
+    "audioLoading": "Loading audio..."
+  },
+  "input": {
+    "placeholder": "Enter your argument here (max 500 characters)",
+    "submit": "Submit",
+    "preview": "Preview"
+  },
+  "moderator": {
+    "title": "Moderator",
+    "welcome": "Welcome to the debate on \"{topic}\". You are {side}. Let's begin Round {round}.",
+    "roundStart": "Round {round} begins. {speaker}, please present your argument.",
+    "turnTransition": "Argument received. Now {speaker}, please respond.",
+    "roundEnd": "Round {round} complete. Judges are scoring...",
+    "sessionEnd": "Debate concluded. Final winner: {winner}",
+    "debateEnded": "Debate has ended. Start a new debate to continue."
+  },
+  "flow": {
+    "title": "Debate Flow & Rules",
+    "currentRound": "Current Round",
+    "currentPhase": "Current Phase",
+    "timeRemaining": "Time Remaining",
+    "activeSpeaker": "Active Speaker",
+    "rules": "Rules",
+    "maxLength": "Maximum argument length: 500 characters",
+    "timeLimit": "Time limit per round: 3 minutes",
+    "scoringCriteria": "Scoring: Logic, Evidence, Rhetoric, Rebuttal",
+    "prohibited": "Prohibited: Sensitive words, personal attacks",
+    "rounds": {
+      "round1": "Round 1: Opening Statements",
+      "round2": "Round 2: Rebuttals",
+      "round3": "Round 3: Cross-Examination",
+      "round4": "Round 4: Defense",
+      "round5": "Round 5: Closing Arguments",
+      "judging": "Judging & Results"
+    }
+  },
+  "score": {
+    "title": "Score Board",
+    "userScore": "Your Score",
+    "aiScore": "AI Score",
+    "roundScore": "Round {round} Scores",
+    "affirmativeRoundScore": "Affirmative",
+    "negativeRoundScore": "Negative",
+    "cumulativeScores": "Cumulative Scores",
+    "maxScore": "/ 500"
+  },
+  "sides": {
+    "affirmative": "Affirmative",
+    "negative": "Negative",
+    "AFFIRMATIVE": "Affirmative (Pro)",
+    "NEGATIVE": "Negative (Con)"
+  },
+  "states": {
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "paused": "Paused",
+    "completed": "Completed"
+  },
+  "modes": {
+    "observer": "Observer Mode"
+  },
+  "config": {
+    "aiConfiguration": "AI Configuration",
+    "affirmativeSide": "Affirmative Side",
+    "negativeSide": "Negative Side",
+    "personality": "Personality",
+    "expertiseLevel": "Expertise Level",
+    "autoPlaySpeed": "Auto-play Speed"
+  },
+  "speed": {
+    "fast": "Fast",
+    "normal": "Normal",
+    "slow": "Slow"
+  },
+  "personality": {
+    "analytical": "Analytical",
+    "passionate": "Passionate",
+    "logical": "Logical",
+    "creative": "Creative",
+    "aggressive": "Aggressive"
+  },
+  "expertise": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "expert": "Expert"
+  },
+  "messages": {
+    "selectTopicPrompt": "Selected: {topic}\n\nChoose your side:\nOK = Affirmative (Pro)\nCancel = Negative (Con)",
+    "debateStarted": "Debate started! You are {side}. Good luck!",
+    "pleaseEnterArgument": "Please enter an argument",
+    "pleaseSelectTopic": "Please select a topic and start a debate first",
+    "failedToStart": "Failed to start debate. Please try again.",
+    "failedToSubmit": "Failed to submit argument: {error}",
+    "debateComplete": "Debate Complete!\n\nWinner: {winner}\nYour Score: {userScore}\nAI Score: {aiScore}\n\nFeedback: {feedback}",
+    "errorLoadingTopics": "Error loading topics. Please check server connection.",
+    "adminPanelComingSoon": "Admin panel coming soon!",
+    "selectTopicFirst": "Please select a topic from the list below to start a debate!",
+    "debateEndedCannotSubmit": "Debate has ended. You cannot submit new arguments."
+  },
+  "footer": {
+    "text": "AI Debate Simulator v1.0.0 | Wasteland Edition | Powered by Spring Boot & Vue.js"
+  }
+}

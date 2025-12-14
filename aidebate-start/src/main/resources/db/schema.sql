@@ -67,15 +67,17 @@ CREATE TABLE IF NOT EXISTS `debate_topic` (
 CREATE TABLE IF NOT EXISTS `debate_session` (
     `session_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'Unique session identifier',
     `topic_id` BIGINT NOT NULL COMMENT 'Reference to debate topic',
-    `user_id` BIGINT NOT NULL COMMENT 'Participating user',
-    `user_side` ENUM('AFFIRMATIVE', 'NEGATIVE') NOT NULL COMMENT 'User''s debate side',
-    `ai_opponent_config` JSON NOT NULL COMMENT 'AI personality and level settings',
-    `status` ENUM('INITIALIZED', 'IN_PROGRESS', 'COMPLETED', 'ABORTED') NOT NULL DEFAULT 'INITIALIZED' COMMENT 'Session status',
+    `user_id` BIGINT NULL COMMENT 'Participating user (optional for AI-only debates)',
+    `ai_debater_configs` JSON NOT NULL COMMENT 'AI configurations for both affirmative and negative debaters',
+    `auto_play_speed` ENUM('FAST', 'NORMAL', 'SLOW') NOT NULL DEFAULT 'NORMAL' COMMENT 'Delay between AI argument generations',
+    `is_paused` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Current pause state',
+    `current_position` VARCHAR(100) NULL COMMENT 'Current execution position for pause/resume',
+    `status` ENUM('INITIALIZED', 'IN_PROGRESS', 'PAUSED', 'COMPLETED', 'ABORTED') NOT NULL DEFAULT 'INITIALIZED' COMMENT 'Session status',
     `started_at` TIMESTAMP NULL COMMENT 'Session start time',
     `completed_at` TIMESTAMP NULL COMMENT 'Session completion time',
-    `final_score_user` DECIMAL(5,2) NULL COMMENT 'User''s final score',
-    `final_score_ai` DECIMAL(5,2) NULL COMMENT 'AI''s final score',
-    `winner` ENUM('USER', 'AI', 'DRAW') NULL COMMENT 'Debate winner',
+    `final_score_affirmative` DECIMAL(5,2) NULL COMMENT 'Affirmative side final score',
+    `final_score_negative` DECIMAL(5,2) NULL COMMENT 'Negative side final score',
+    `winner` ENUM('AFFIRMATIVE', 'NEGATIVE', 'DRAW') NULL COMMENT 'Debate winner by side',
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Record creation time',
     PRIMARY KEY (`session_id`),
     INDEX `idx_user_id` (`user_id`),
@@ -83,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `debate_session` (
     INDEX `idx_status` (`status`),
     INDEX `idx_created_at` (`created_at`),
     CONSTRAINT `fk_session_topic` FOREIGN KEY (`topic_id`) REFERENCES `debate_topic` (`topic_id`),
-    CONSTRAINT `fk_session_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+    CONSTRAINT `fk_session_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Debate sessions and results';
 
 -- =============================================
@@ -128,6 +130,29 @@ CREATE TABLE IF NOT EXISTS `argument` (
     CONSTRAINT `fk_argument_session` FOREIGN KEY (`session_id`) REFERENCES `debate_session` (`session_id`) ON DELETE CASCADE,
     CONSTRAINT `fk_argument_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Arguments submitted during debates';
+
+-- =============================================
+-- Table: moderator_message
+-- Description: Moderator interventions during debates
+-- =============================================
+CREATE TABLE IF NOT EXISTS `moderator_message` (
+    `message_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'Unique message identifier',
+    `session_id` BIGINT NOT NULL COMMENT 'Reference to debate session',
+    `argument_id` BIGINT NULL COMMENT 'Reference to argument being discussed',
+    `round_number` INT NOT NULL COMMENT 'Debate round number',
+    `message_type` ENUM('SUMMARY', 'EVALUATION', 'ANNOUNCEMENT', 'ROUND_TRANSITION') NOT NULL COMMENT 'Type of moderator message',
+    `content` TEXT NOT NULL COMMENT 'Message content',
+    `speaker_side` VARCHAR(20) NULL COMMENT 'Side that was speaking',
+    `next_speaker` VARCHAR(20) NULL COMMENT 'Next speaker announced',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Message creation time',
+    PRIMARY KEY (`message_id`),
+    INDEX `idx_session_id` (`session_id`),
+    INDEX `idx_argument_id` (`argument_id`),
+    INDEX `idx_round_number` (`round_number`),
+    INDEX `idx_message_type` (`message_type`),
+    CONSTRAINT `fk_moderator_session` FOREIGN KEY (`session_id`) REFERENCES `debate_session` (`session_id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_moderator_argument` FOREIGN KEY (`argument_id`) REFERENCES `argument` (`argument_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Moderator interventions during debates';
 
 -- =============================================
 -- Table: scoring_rule
