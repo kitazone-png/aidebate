@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Debate Simulator - Wasteland Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wasteland: {
+                            dark: '#1a1a2e',
+                            darker: '#0f0f1a',
+                            blue: '#16213e',
+                            gold: '#d4af37',
+                            'gold-light': '#f4d03f',
+                            rust: '#8b4513'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .wasteland-card {
+            background: rgba(22, 33, 62, 0.8);
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .wasteland-button {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            color: #0f0f1a;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .wasteland-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(244, 208, 63, 0.5);
+        }
+        
+        .split-panel {
+            border: 1px solid #d4af37;
+            background: rgba(15, 15, 26, 0.6);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-100">
+    <!-- Header -->
+    <header class="p-6 border-b-2 border-wasteland-gold">
+        <div class="container mx-auto">
+            <h1 class="text-4xl font-bold text-wasteland-gold text-center">
+                ⚔️ AI DEBATE SIMULATOR ⚔️
+            </h1>
+            <p class="text-center mt-2 text-wasteland-gold-light">Wasteland Edition - Forge Your Arguments in the Arena</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="wasteland-card rounded-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-wasteland-gold mb-4">Welcome to the Debate Arena</h2>
+            <p class="text-lg mb-4">
+                In this post-apocalyptic world, the power of argument is your greatest weapon.
+                Choose your side, face AI opponents, and prove your debating prowess.
+            </p>
+            <div class="flex gap-4 flex-wrap">
+                <button class="wasteland-button px-6 py-3 rounded-lg">
+                    Start New Debate
+                </button>
+                <button class="wasteland-button px-6 py-3 rounded-lg">
+                    View Topics
+                </button>
+                <button class="wasteland-button px-6 py-3 rounded-lg">
+                    Admin Panel
+                </button>
+            </div>
+        </div>
+
+        <!-- Topic Selection -->
+        <div class="wasteland-card rounded-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-wasteland-gold mb-4">📋 Available Debate Topics</h2>
+            <div id="topics-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Topics will be loaded here -->
+                <div class="p-4 bg-wasteland-darker rounded border border-wasteland-gold">
+                    <h3 class="font-bold text-wasteland-gold-light mb-2">Loading topics...</h3>
+                    <p class="text-sm text-gray-400">Fetching available debate topics from the server...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Split Screen Debate Interface (Example) -->
+        <div class="wasteland-card rounded-lg p-8">
+            <h2 class="text-2xl font-bold text-wasteland-gold mb-4 text-center">⚡ Live Debate Arena ⚡</h2>
+            
+            <!-- Timer and Score -->
+            <div class="flex justify-between items-center mb-6 p-4 bg-wasteland-darker rounded">
+                <div class="text-center">
+                    <div class="text-wasteland-gold font-bold">TIME</div>
+                    <div class="text-2xl font-mono">03:00</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-wasteland-gold font-bold">ROUND</div>
+                    <div class="text-2xl font-mono">1 / 5</div>
+                </div>
+                <div class="flex gap-8">
+                    <div class="text-center">
+                        <div class="text-blue-400 font-bold">USER</div>
+                        <div class="text-2xl font-mono text-blue-400">0.00</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-red-400 font-bold">AI</div>
+                        <div class="text-2xl font-mono text-red-400">0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split Panels -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- User Panel (Left) -->
+                <div class="split-panel rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                        <h3 class="text-xl font-bold text-blue-400">Your Arguments</h3>
+                    </div>
+                    <div class="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                        <div class="p-3 bg-wasteland-dark rounded border-l-4 border-blue-500">
+                            <div class="text-xs text-gray-500 mb-1">Round 1 - Affirmative</div>
+                            <p class="text-sm">Your argument will appear here...</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <textarea 
+                            class="w-full p-3 bg-wasteland-dark border border-wasteland-gold rounded text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-wasteland-gold"
+                            rows="4"
+                            placeholder="Type your argument here... (max 500 characters)"
+                            maxlength="500"
+                        ></textarea>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xs text-gray-500">0 / 500 characters</span>
+                            <div class="space-x-2">
+                                <button class="px-4 py-2 bg-wasteland-blue text-wasteland-gold rounded hover:bg-opacity-80">
+                                    AI Preview
+                                </button>
+                                <button class="wasteland-button px-4 py-2 rounded">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Panel (Right) -->
+                <div class="split-panel rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                        <h3 class="text-xl font-bold text-red-400">AI Opponent</h3>
+                    </div>
+                    <div class="space-y-3 max-h-64 overflow-y-auto">
+                        <div class="p-3 bg-wasteland-dark rounded border-l-4 border-red-500">
+                            <div class="text-xs text-gray-500 mb-1">Round 1 - Negative</div>
+                            <p class="text-sm">AI arguments will appear here...</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-wasteland-dark rounded">
+                        <div class="text-xs text-wasteland-gold mb-2">AI Configuration</div>
+                        <div class="text-sm text-gray-400">
+                            <div>Personality: Analytical</div>
+                            <div>Level: Expert</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 p-6 border-t-2 border-wasteland-gold text-center text-gray-500">
+        <p>AI Debate Simulator v1.0.0 | Wasteland Edition | Powered by Spring Boot & Vue.js</p>
+    </footer>
+
+    <script>
+        // Fetch topics from API
+        async function loadTopics() {
+            try {
+                const response = await fetch('/api/topics');
+                const topics = await response.json();
+                
+                const topicsList = document.getElementById('topics-list');
+                if (topics.length === 0) {
+                    topicsList.innerHTML = '<div class="col-span-2 text-center text-gray-500">No topics available yet.</div>';
+                    return;
+                }
+                
+                topicsList.innerHTML = topics.map(topic => `
+                    <div class="p-4 bg-wasteland-darker rounded border border-wasteland-gold hover:border-wasteland-gold-light transition cursor-pointer">
+                        <h3 class="font-bold text-wasteland-gold-light mb-2">${topic.title}</h3>
+                        <p class="text-sm text-gray-400 mb-2">${topic.description || 'No description'}</p>
+                        <div class="flex justify-between items-center text-xs text-gray-500">
+                            <span class="bg-wasteland-blue px-2 py-1 rounded">${topic.category || 'General'}</span>
+                            <span>${topic.source}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading topics:', error);
+                document.getElementById('topics-list').innerHTML = 
+                    '<div class="col-span-2 text-center text-red-400">Error loading topics. Please check server connection.</div>';
+            }
+        }
+
+        // Load topics on page load
+        window.addEventListener('DOMContentLoaded', loadTopics);
+    </script>
+</body>
+</html>

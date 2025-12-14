@@ -1,0 +1,100 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: ai-debate-simulator
+    
+  # Database Configuration
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/aidebate?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: ${MYSQL_PASSWORD:root}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      
+  # Redis Configuration (Optional)
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+          
+  # AI Configuration - Spring AI Alibaba
+  ai:
+    alibaba:
+      api-key: ${ALIBABA_AI_API_KEY:your-api-key-here}
+      model: ${ALIBABA_AI_MODEL:qwen-max}
+      temperature: 0.7
+      max-tokens: 2000
+      timeout: 30000
+      enable-retry: true
+      max-retry-attempts: 3
+
+# MyBatis Plus Configuration
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.aidebate.domain.model
+
+# Content Moderation Configuration
+moderation:
+  sensitive-word:
+    cache-ttl: 3600  # Cache sensitive words for 1 hour
+    case-sensitive: false
+    pattern-matching-enabled: true
+    default-enabled: true
+
+# Debate Configuration
+debate:
+  max-rounds: 5
+  argument-character-limit: 500
+  turn-time-limit-seconds: 180
+  preview-generation-max-attempts: 5
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.aidebate: DEBUG
+    com.baomidou.mybatisplus: DEBUG
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
+  file:
+    name: logs/aidebate.log
+    max-size: 10MB
+    max-history: 30
+
+# Management Endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
